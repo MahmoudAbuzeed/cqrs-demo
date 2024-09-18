@@ -1,85 +1,150 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# CQRS Demo Project
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## Overview
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This project is a demonstration of implementing the Command Query Responsibility Segregation (CQRS) pattern using NestJS with MongoDB as the database and TypeORM as the ORM. The application allows you to create, update, delete, and query user entities while persisting all changes as events in an event store.
 
-## Description
+## Features Implemented
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+1. **User Management**:
 
-## Project setup
+   - **Create User**: Adds a new user to the system.
+   - **Update User**: Updates an existing user’s details.
+   - **Delete User**: Removes a user from the system.
+   - **Get Users**: Retrieves a list of all users.
 
-```bash
-$ npm install
+2. **CQRS Implementation**:
+
+   - Command and query handlers are defined for managing user operations.
+   - Commands include `CreateUserCommand`, `UpdateUserCommand`, `DeleteUserCommand`, and `GetUsersQuery`.
+
+3. **Event Sourcing**:
+
+   - Events are emitted for each user action (creation, update, deletion) and stored in an event store.
+   - The event store is implemented using a MongoDB collection, where each event is logged with its type and payload.
+
+4. **TypeORM Integration**:
+   - Entities for `User` and `Event` are defined using TypeORM, allowing for seamless interaction with MongoDB.
+   - The application configuration uses TypeORM for establishing a connection to the MongoDB database.
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js
+- MongoDB
+- NestJS CLI
+
+### Installation
+
+1. **Clone the Repository**:
+
+   ```bash
+   git clone <repository-url>
+   cd cqrs-demo
+   ```
+
+2. **Install Dependencies**:
+
+   ```bash
+   npm install
+   ```
+
+3. **Set Up MongoDB**:
+   Ensure that MongoDB is running locally or update the connection settings in `app.module.ts` to point to your MongoDB instance.
+
+### Running the Application
+
+1. Start the application:
+
+   ```bash
+   npm run start
+   ```
+
+2. The application will be available at `http://localhost:3000`.
+
+### API Endpoints
+
+- **Create User**: `POST /users`
+
+  - Request Body:
+    ```json
+    {
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    }
+    ```
+
+- **Update User**: `PATCH /users/:id`
+
+  - Request Body:
+    ```json
+    {
+      "name": "Updated Name",
+      "email": "updated.email@example.com"
+    }
+    ```
+
+- **Delete User**: `DELETE /users/:id`
+
+- **Get Users**: `GET /users`
+
+- **Get Events**: `GET /users/events`
+
+## Folder Structure
+
+```
+src/
+├── commands/
+│   ├── create-user.command.ts
+│   ├── update-user.command.ts
+│   ├── delete-user.command.ts
+│   └── get-users.query.ts
+├── entities/
+│   ├── user.entity.ts
+│   └── event.entity.ts
+├── events/
+│   └── user.events.ts
+├── queries/
+│   └── get-users.handler.ts
+├── controllers/
+│   └── user.controller.ts
+├── listeners/
+│   └── user.listener.ts
+├── services/
+│   └── event-store.service.ts
+│
+└── app.module.ts
 ```
 
-## Compile and run the project
+## Next Steps
 
-```bash
-# development
-$ npm run start
+In the next phase of development, we will focus on:
 
-# watch mode
-$ npm run start:dev
+1. **Implementing Advanced Patterns**:
 
-# production mode
-$ npm run start:prod
-```
+   - **Sagas**: To manage complex workflows that involve multiple operations.
+   - **Event-Driven Architecture**: Enhancing the application to respond to events in real-time and potentially integrating with other services.
 
-## Run tests
+2. **Unit Testing**:
 
-```bash
-# unit tests
-$ npm run test
+   - Implement unit tests for command and query handlers to ensure functionality and reliability.
 
-# e2e tests
-$ npm run test:e2e
+3. **Data Validation**:
 
-# test coverage
-$ npm run test:cov
-```
+   - Integrate validation using `class-validator` to ensure that incoming requests meet the necessary criteria.
 
-## Resources
+4. **Error Handling**:
 
-Check out a few resources that may come in handy when working with NestJS:
+   - Enhance error handling mechanisms to provide clearer feedback and manage exceptions effectively.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+5. **Persistent Event Store**:
+   - Explore more robust solutions for event storage, such as using dedicated event store databases or message brokers.
 
-## Support
+## Contributing
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+If you would like to contribute to this project, feel free to fork the repository and submit a pull request.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+This project is licensed under the MIT License.
