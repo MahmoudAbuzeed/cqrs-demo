@@ -13,12 +13,14 @@ import { DeleteUserCommand } from 'src/commands/delete-user.command';
 import { UpdateUserCommand } from 'src/commands/update-user.command';
 import { User } from 'src/entities/user.entity';
 import { GetUsersQuery } from 'src/queries/get-users.query';
+import { EventStoreService } from 'src/services/event-store.service';
 
 @Controller('users')
 export class UserController {
   constructor(
     private readonly commandBus: CommandBus,
     private readonly queryBus: QueryBus,
+    private readonly eventStoreService: EventStoreService,
   ) {}
 
   @Post()
@@ -48,5 +50,10 @@ export class UserController {
   @Delete(':id')
   async deleteUser(@Param('id') id: string): Promise<void> {
     return this.commandBus.execute(new DeleteUserCommand(id));
+  }
+
+  @Get('events')
+  async getEvents() {
+    return this.eventStoreService.getAllEvents();
   }
 }

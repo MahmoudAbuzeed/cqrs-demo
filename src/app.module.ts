@@ -1,4 +1,4 @@
-import { Delete, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CqrsModule } from '@nestjs/cqrs';
 import { AppController } from './app.controller';
@@ -9,6 +9,10 @@ import { User } from './entities/user.entity';
 import { UserController } from './controllers/user.controller';
 import { UpdateUserHandler } from './commands/commands-handlers/update-user.handler';
 import { DeleteUserHandler } from './commands/commands-handlers/delete-user.handler';
+import { UserEventListener } from './listeners/user.listeners';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { EventStoreService } from './services/event-store.service';
+import { Event } from './entities/event.entity';
 
 @Module({
   imports: [
@@ -19,10 +23,10 @@ import { DeleteUserHandler } from './commands/commands-handlers/delete-user.hand
       database: 'test',
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      entities: [User],
+      entities: [User, Event],
       synchronize: true,
     }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Event]),
     CqrsModule,
   ],
   controllers: [AppController, UserController],
@@ -32,6 +36,9 @@ import { DeleteUserHandler } from './commands/commands-handlers/delete-user.hand
     GetUsersHandler,
     UpdateUserHandler,
     DeleteUserHandler,
+    UserEventListener,
+    EventEmitter2,
+    EventStoreService,
   ],
 })
 export class AppModule {}

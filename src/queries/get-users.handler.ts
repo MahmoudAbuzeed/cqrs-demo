@@ -11,7 +11,7 @@ export class GetUsersHandler implements IQueryHandler<GetUsersQuery> {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async execute(query: GetUsersQuery): Promise<User[]> {
+  async execute(): Promise<User[]> {
     return this.userRepository.find();
   }
 }
